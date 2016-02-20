@@ -1,0 +1,31 @@
+<!doctype html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>ScratchWiki</title>
+
+    <link rel="stylesheet" href="{{ url_for('static', filename='bootstrap.min.css') }}" />
+    <link rel="stylesheet" href="{{ url_for('static', filename='simplemde.min.css') }}" />
+    <link rel="stylesheet" href="{{ url_for('static', filename='font-awesome.min.css') }}" />
+    <link rel="stylesheet" href="{{ url_for('static', filename='select2/select2.css') }}" />
+    <link rel="stylesheet" href="{{ url_for('static', filename='main.css') }}" />
+
+    <script src="{{ url_for('static', filename='jquery-2.2.0.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='bootstrap.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='select2/select2.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='simplemde.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='mousetrap.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='main.js') }}"></script>
+
+    {% block headextend %}
+    {% endblock %}
+</head>
+<body>
+    <div class="container">
+        {% block content %}
+        {% endblock %}
+    </div>
+</body>
+</html>

@@ -1,0 +1,44 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h1>ScratchWiki</h1>
+
+<div class="row">
+    <div class="col-md-offset-2 col-md-8">
+        <form id="post-form" method="post" action="{{ url_for('edit') }}">
+            <input id="tags" name="tags"></select>
+            <textarea id="editor" name="editor"></textarea>
+            <button type="submit" class="btn btn-default pull-right">Post</button>
+        </form>
+    </div>
+
+</div>
+
+<script>
+    $(function() {
+        var simplemde = new SimpleMDE({
+            element: $('#editor')[0],
+            spellChecker: false,
+            autoDownloadFontAwesome: false
+        });
+        $('#tags').select2({
+            placeholder: 'Tags',
+            tags: true,
+            tokenSeparators: [' ', ','],
+            width: '100%'
+        });
+        var callback = function() {
+            console.log('foobar')
+//            $('#post-form').submit();
+        };
+        Mousetrap.bind('ctrl+enter', callback);
+        $('#post-form input').each(function(idx, element) {
+            Mousetrap(element).bind('ctrl+enter', callback)
+        })
+        $('#post-form textarea').each(function(idx, element) {
+            Mousetrap(element).bind('ctrl+enter', callback)
+        })
+    });
+</script>
+
+{% endblock %}
