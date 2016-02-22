@@ -1,15 +1,90 @@
 {% extends "base.html" %}
 
 {% block content %}
-<h1>ScratchWiki</h1>
+<div class="row search-bar">
+    <input type="text" id="search" />
+</div>
 
 <div class="row">
     {% for post in posts %}
+        <div class="entry">
+            <div class="meta-entry">
+                <div class="date">{{ post.created_at|date }}</div>
 
+                {% for tag in post.tags %}
+                    <div class="tag">
+                        <a href="#">
+                            {{ tag.name }}
+                        </a>
+                    </div>
+                {% endfor %}
+
+                <div class="clearfix"></div>
+            </div>
+            <div class="post">
+                {{ post.html|safe }}
+            </div>
+            <div class="edit-post">
+                <a href="{{ url_for('edit', post_id=post.id) }}">
+                    edit
+                </a>
+            </div>
+            <div class="clearfix"></div>
+        </div>
     {% endfor %}
 </div>
 
 <script>
+    $(function() {
+        $('#search').select2({
+            placeholder: 'Search tags',
+            tags: true,
+            tokenSeparators: [' ', ','],
+            width: '100%'
+        });
+        $('#search').on('change', function() {
+            console.log('--changed')
+        })
+
+        var toggleMeta = function(showOrHide) {
+            showOrHide = parseInt(showOrHide)
+            if ( showOrHide ) {
+                $('.meta-entry').css({
+                    display: ''
+                })
+                $('.edit-post').css({
+                    display: ''
+                })
+                $('.entry').css({
+                    border: '1px solid #ddd',
+                    'margin-top': 20,
+                    'padding': 20
+                })
+            } else {
+                $('.meta-entry').css({
+                    display: 'none'
+                })
+                $('.edit-post').css({
+                    display: 'none'
+                })
+                $('.entry').css({
+                    border: 'none',
+                    'margin-top': 0,
+                    'padding': 0
+                })
+            }
+        }
+
+        var callback = function() {
+            var showOrHide = sessionStorage.getItem('showOrHide') || 1
+            showOrHide = 1 - showOrHide
+            sessionStorage.setItem('showOrHide', showOrHide)
+            toggleMeta(showOrHide)
+        }
+        Mousetrap.bind('alt+h', callback);
+
+        toggleMeta(sessionStorage.getItem('showOrHide') || 1)
+    })
 </script>
 
 {% endblock %}
