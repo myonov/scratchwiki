@@ -22,6 +22,13 @@ def index():
 @app.route('/edit', methods=['GET', 'POST'], endpoint='new-post')
 @app.route('/edit/<int:post_id>', methods=['GET', 'POST'])
 def edit(post_id=None):
+    data = {'post': None}
+
+    if post_id is None:
+        p = Post()
+    else:
+        p = Post.get(Post.id == post_id)
+        data['post'] = p
 
     if request.method == 'POST':
         text_markdown = request.form['editor']
@@ -35,11 +42,10 @@ def edit(post_id=None):
             ],
         )
 
-        if post_id is None:
-            p = Post.create(markdown=text_markdown, html=text_html)
-        else:
-            p = Post.get(Post.id == post_id)
-            p.update(text_markdown=text_markdown, text_html=text_html)
+        p.markdown = text_markdown
+        p.html = text_html
+        p.save()
+        p.update_tags(tags)
 
         for tag in tags:
             t, created = Tag.get_or_create(name=tag)
@@ -47,7 +53,7 @@ def edit(post_id=None):
 
         return redirect(url_for('index'))
 
-    return render_template('edit.html')
+    return render_template('edit.html', **data)
 
 @app.route('/new', methods=['GET', 'POST'])
 def new():
@@ -56,6 +62,10 @@ def new():
         'post': {},
     }
     return render_template('edit.html', **data)
+
+@app.route('/delete/<int:post_id>')
+def delete(post_id):
+    pass
 
 if app.debug:
     @app.route('/media/<path:filename>')

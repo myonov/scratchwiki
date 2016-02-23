@@ -31,6 +31,20 @@ class Post(BasicModel):
         tags = Tag.select().where(Tag.id << tag_ids)
         return tags
 
+    @property
+    def tag_names(self):
+        return [t.name for t in self.tags]
+
+    def update_tags(self, tags):
+        q = TagPost.delete().where(
+            TagPost.tag_id << [t.id for t in self.tags]
+        ).where(TagPost.post_id == self.id)
+        q.execute()
+
+        for tag in tags:
+            t, created = Tag.get_or_create(name=tag)
+            TagPost.get_or_create(post_id=self.id, tag_id=t.id)
+
 class Tag(BasicModel):
     name = CharField(max_length=64, index=True, unique=True)
 
