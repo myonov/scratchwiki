@@ -1,5 +1,6 @@
-.a-logo h1 {
+.a-logo {
     margin-left: 15px;
+    display: inline-block;
 }
 
 .entry {
@@ -41,4 +42,8 @@
 
 .logo {
     margin-bottom: 20px;
+}
+
+.info-text {
+    float: right;
 }

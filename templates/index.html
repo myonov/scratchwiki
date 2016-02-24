@@ -29,6 +29,10 @@
                     edit
                 </a>
                 |
+                <a href="{{ url_for('post', post_id=post.id) }}">
+                    view
+                </a>
+                |
                 <a href="{{ url_for('delete', post_id=post.id) }}" data-toggle="confirmation">
                     delete
                 </a>
@@ -88,6 +92,8 @@
         Mousetrap.bind('alt+h', callback);
 
         toggleMeta(sessionStorage.getItem('showOrHide') || 1)
+
+        $('[data-toggle="confirmation"]').confirmation({title: 'Delete?'})
     })
 </script>
 

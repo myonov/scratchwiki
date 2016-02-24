@@ -57,15 +57,25 @@ def edit(post_id=None):
 
 @app.route('/new', methods=['GET', 'POST'])
 def new():
+    p = Post()
+    p.markdown = ''
     data = {
         'new_post': True,
-        'post': {},
+        'post': p,
     }
     return render_template('edit.html', **data)
 
 @app.route('/delete/<int:post_id>')
 def delete(post_id):
-    pass
+    Post.get(Post.id == post_id).delete_instance()
+    return redirect(request.referrer or url_for('index'))
+
+@app.route('/post/<int:post_id>')
+def post(post_id):
+    data = {
+        'post': Post.get(Post.id == post_id)
+    }
+    return render_template('post.html', **data)
 
 if app.debug:
     @app.route('/media/<path:filename>')

@@ -42,8 +42,9 @@ class Post(BasicModel):
         q.execute()
 
         for tag in tags:
-            t, created = Tag.get_or_create(name=tag)
-            TagPost.get_or_create(post_id=self.id, tag_id=t.id)
+            with db.transaction():
+                t, created = Tag.get_or_create(name=tag)
+                TagPost.get_or_create(post_id=self.id, tag_id=t.id)
 
 class Tag(BasicModel):
     name = CharField(max_length=64, index=True, unique=True)
