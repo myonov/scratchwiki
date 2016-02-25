@@ -3,9 +3,15 @@
         <h1 class="a-logo">ScratchWiki</h1>
     </a>
 
-    <!--<span class="glyphicon glyphicon-info-sign" data-toggle="tooltip" data-placement="left">-->
-        <!--Alt + H - toggle show/hide entry meta details (in index) <br>-->
-        <!--Alt + N - create new post (in index) <br>-->
-        <!--Ctrl + Enter - submit post when editing <br>-->
-    <!--</span>-->
+    <div>
+        <span class="glyphicon glyphicon-info-sign pull-right" data-toggle="popover" data-placement="bottom"
+                data-content="Alt + H - toggle show/hide entry meta details (in index)<br>Alt + N - create new post (in index)<br>Ctrl + Enter - submit post when editing">
+        </span>
+    </div>
 </header>
+
+<script>
+    $(function () {
+        $('[data-toggle="popover"]').popover({html: true})
+    })
+</script>

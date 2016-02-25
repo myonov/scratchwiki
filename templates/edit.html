@@ -14,10 +14,10 @@
 </div>
 
 <script>
-    var globals = {
-        postTags: {{ post.tag_names|tojson|safe }},
-        markdown: {{ post.markdown|tojson|safe }}
-    }
+    var globals = globals || {}
+    globals['postTags'] = {{ post.tag_names|tojson|safe }}
+    globals['markdown'] = {{ post.markdown|tojson|safe }}
+    globals['newTags'] = decodeURIComponent({{ new_tags|tojson|safe }}).split(',')
 
     $(function() {
         var simplemde = new SimpleMDE({
@@ -31,7 +31,11 @@
             tokenSeparators: [' ', ','],
             width: '100%'
         })
-        $('#tags').select2('val', globals.postTags)
+        if ( globals.postTags.length > 0 ) {
+            $('#tags').select2('val', globals.postTags)
+        } else {
+            $('#tags').select2('val', globals.newTags)
+        }
         simplemde.value(globals.markdown)
 
         var callback = function() {

@@ -2,38 +2,42 @@
 
 {% block content %}
 <div class="row search-bar">
-    <input type="text" id="search" />
+    <div class="col-md-10 col-lg-10">
+        <input type="text" id="search" />
+    </div>
+    <div class="col-md-2 col-lg-2 btn-group">
+        <button type="button" class="btn btn-default half-width-btn" id="search-btn">search</button>
+        <button type="button" class="btn btn-default half-width-btn" id="new-btn">new</button>
+    </div>
 </div>
 
 <div class="row">
     {% for post in posts %}
-        <div class="entry">
+        <div class="entry well well-sm">
             <div class="meta-entry">
-                <div class="date">{{ post.created_at|date }}</div>
+                <h2 class="label label-default">{{ post.created_at|date }}</h2>
 
-                {% for tag in post.tags %}
-                    <div class="tag">
-                        <a href="#">
+                <div class="btn-group btn-group-xs pull-right" role="toolbar">
+                    {% for tag in post.tags %}
+                        <a href="#" class="btn btn-default"
+                           role="group" aria-label="{{ tag.name }}">
                             {{ tag.name }}
                         </a>
-                    </div>
-                {% endfor %}
+                    {% endfor %}
+                </div>
 
-                <div class="clearfix"></div>
             </div>
             <div class="post">
                 {{ post.html|safe }}
             </div>
-            <div class="edit-post">
-                <a href="{{ url_for('edit', post_id=post.id) }}">
+            <div class="edit-post pull-right btn-group" role="group">
+                <a href="{{ url_for('edit', post_id=post.id) }}" class="btn btn-default">
                     edit
                 </a>
-                |
-                <a href="{{ url_for('post', post_id=post.id) }}">
+                <a href="{{ url_for('post', post_id=post.id) }}" class="btn btn-default">
                     view
                 </a>
-                |
-                <a href="{{ url_for('delete', post_id=post.id) }}" data-toggle="confirmation">
+                <a href="{{ url_for('delete', post_id=post.id) }}" data-toggle="confirmation" class="btn btn-danger">
                     delete
                 </a>
             </div>
@@ -43,6 +47,10 @@
 </div>
 
 <script>
+    var globals = globals || {}
+    globals['searchUrl'] = "{{ url_for('search', _external=True) }}"
+    globals['newPostUrl'] = "{{ url_for('new', _external=True) }}"
+
     $(function() {
         $('#search').select2({
             placeholder: 'Search tags',
@@ -68,6 +76,8 @@
                     'margin-top': 20,
                     'padding': 20
                 })
+                $('.entry').addClass('well')
+                $('.entry').addClass('well-sm')
             } else {
                 $('.meta-entry').css({
                     display: 'none'
@@ -80,6 +90,8 @@
                     'margin-top': 0,
                     'padding': 0
                 })
+                $('.well').each(function(idx, el) { $(el).removeClass('well') })
+                $('.well').each(function(idx, el) { $(el).removeClass('well-sm') })
             }
         }
 
@@ -93,7 +105,16 @@
 
         toggleMeta(sessionStorage.getItem('showOrHide') || 1)
 
-        $('[data-toggle="confirmation"]').confirmation({title: 'Delete?'})
+        $('[data-toggle="confirmation"]').confirmation({
+            placement: 'top',
+            onConfirm: function(event, element) {
+                window.location = $(element).attr('href')
+            }
+        })
+
+        $('#new-btn').click(function() {
+            location.href = globals['newPostUrl'] + '?tags=' + encodeURIComponent($('#search').val())
+        })
     })
 </script>
 

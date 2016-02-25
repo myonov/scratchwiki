@@ -7,6 +7,7 @@
     border: 1px solid #ddd;
     margin-top: 20px;
     padding: 20px;
+    position: relative;
 }
 
 .meta-entry {
@@ -14,18 +15,6 @@
     top: -20px;
     margin-left: -20px;
     margin-right: -20px;
-    background-color: #f5f5f5;
-    border: 1px solid #ccc;
-}
-
-.date {
-    display: inline-block;
-}
-
-.tag {
-    display: inline-block;
-    float: right;
-    padding-left: 10px;
 }
 
 .clearfix {
@@ -33,7 +22,9 @@
 }
 
 .edit-post {
-    float: right;
+    position: absolute;
+    bottom: 0;
+    right: 0;
 }
 
 .search-bar {
@@ -46,4 +37,8 @@
 
 .info-text {
     float: right;
+}
+
+.half-width-btn {
+    width: 50%;
 }

@@ -12,7 +12,6 @@ def _pretty_date(value):
     return value.strftime('%H:%M:%S %d.%m.%Y')
 
 @app.route('/')
-@app.route('/index')
 def index():
     data = {
         'posts': Post.select().order_by(Post.created_at.desc())
@@ -61,6 +60,7 @@ def new():
     p.markdown = ''
     data = {
         'new_post': True,
+        'new_tags': request.args.get('tags'),
         'post': p,
     }
     return render_template('edit.html', **data)
@@ -76,6 +76,10 @@ def post(post_id):
         'post': Post.get(Post.id == post_id)
     }
     return render_template('post.html', **data)
+
+@app.route('/search')
+def search():
+    pass
 
 if app.debug:
     @app.route('/media/<path:filename>')
