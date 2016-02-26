@@ -1,5 +1,4 @@
 .a-logo {
-    margin-left: 15px;
     display: inline-block;
 }
 
@@ -17,11 +16,11 @@
     margin-right: -20px;
 }
 
-.clearfix {
-    clear: both;
+.post {
+    padding-bottom: 10px;
 }
 
-.edit-post {
+.post-buttons {
     position: absolute;
     bottom: 0;
     right: 0;

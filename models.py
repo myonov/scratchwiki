@@ -46,6 +46,10 @@ class Post(BasicModel):
                 t, created = Tag.get_or_create(name=tag)
                 TagPost.get_or_create(post_id=self.id, tag_id=t.id)
 
+    def remove(self):
+        self.update_tags([])
+        self.delete_instance()
+
 class Tag(BasicModel):
     name = CharField(max_length=64, index=True, unique=True)
 
@@ -64,3 +68,13 @@ if __name__ == '__main__':
         if os.path.exists('scratch.db'):
             os.remove('scratch.db')
         db.create_tables(track_tables())
+    if len(sys.argv) > 1 and sys.argv[1] == 'clean':
+        not_used_tags = Tag.select().join(
+            TagPost,
+            JOIN_LEFT_OUTER,
+            on=(Tag.id == TagPost.tag_id)).where(
+            TagPost.tag_id == None
+        )
+        not_used_tags = [t.id for t in not_used_tags]
+        q = Tag.delete().where(Tag.id << not_used_tags)
+        q.execute()

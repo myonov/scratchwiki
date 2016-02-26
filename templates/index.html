@@ -17,9 +17,9 @@
             <div class="meta-entry">
                 <h2 class="label label-default">{{ post.created_at|date }}</h2>
 
-                <div class="btn-group btn-group-xs pull-right" role="toolbar">
+                <div class="btn-group btn-group-xs pull-right tag-buttons" role="toolbar">
                     {% for tag in post.tags %}
-                        <a href="#" class="btn btn-default"
+                        <a class="btn btn-default"
                            role="group" aria-label="{{ tag.name }}">
                             {{ tag.name }}
                         </a>
@@ -30,7 +30,7 @@
             <div class="post">
                 {{ post.html|safe }}
             </div>
-            <div class="edit-post pull-right btn-group" role="group">
+            <div class="post-buttons pull-right btn-group" role="group">
                 <a href="{{ url_for('edit', post_id=post.id) }}" class="btn btn-default">
                     edit
                 </a>
@@ -41,7 +41,6 @@
                     delete
                 </a>
             </div>
-            <div class="clearfix"></div>
         </div>
     {% endfor %}
 </div>
@@ -68,7 +67,7 @@
                 $('.meta-entry').css({
                     display: ''
                 })
-                $('.edit-post').css({
+                $('.post-buttons').css({
                     display: ''
                 })
                 $('.entry').css({
@@ -82,7 +81,7 @@
                 $('.meta-entry').css({
                     display: 'none'
                 })
-                $('.edit-post').css({
+                $('.post-buttons').css({
                     display: 'none'
                 })
                 $('.entry').css({
@@ -114,6 +113,26 @@
 
         $('#new-btn').click(function() {
             location.href = globals['newPostUrl'] + '?tags=' + encodeURIComponent($('#search').val())
+        })
+
+        $('.tag-buttons a').click(function(e) {
+            var currentTags, $that, newTag
+
+            e.preventDefault()
+            currentTags = $('#search').select2('val')
+            $that = $(this)
+            newTag = $that.attr('aria-label')
+            currentTags.push(newTag)
+            $('#search').select2('val', currentTags)
+        })
+
+        Mousetrap.bind('alt+n', function() {
+            $('#new-btn').trigger('click')
+        })
+        $('.search-bar input').each(function(idx, el) {
+            Mousetrap(el).bind('alt+n', function() {
+                $('#new-btn').trigger('click')
+            })
         })
     })
 </script>

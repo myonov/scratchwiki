@@ -21,7 +21,7 @@ def index():
 @app.route('/edit', methods=['GET', 'POST'], endpoint='new-post')
 @app.route('/edit/<int:post_id>', methods=['GET', 'POST'])
 def edit(post_id=None):
-    data = {'post': None}
+    data = {'post': None, 'new_tags': []}
 
     if post_id is None:
         p = Post()
@@ -32,6 +32,9 @@ def edit(post_id=None):
     if request.method == 'POST':
         text_markdown = request.form['editor']
         tags = request.form['tags'].split(',')
+
+        if len(tags) == 1 and tags[0] == '':
+            tags = []
 
         text_html = markdown.markdown(
             text_markdown,
@@ -45,10 +48,6 @@ def edit(post_id=None):
         p.html = text_html
         p.save()
         p.update_tags(tags)
-
-        for tag in tags:
-            t, created = Tag.get_or_create(name=tag)
-            TagPost.get_or_create(post_id=p.id, tag_id=t.id)
 
         return redirect(url_for('index'))
 
@@ -67,7 +66,7 @@ def new():
 
 @app.route('/delete/<int:post_id>')
 def delete(post_id):
-    Post.get(Post.id == post_id).delete_instance()
+    Post.get(Post.id == post_id).remove()
     return redirect(request.referrer or url_for('index'))
 
 @app.route('/post/<int:post_id>')
