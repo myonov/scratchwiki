@@ -13,35 +13,7 @@
 
 <div class="row">
     {% for post in posts %}
-        <div class="entry well well-sm">
-            <div class="meta-entry">
-                <h2 class="label label-default">{{ post.created_at|date }}</h2>
-
-                <div class="btn-group btn-group-xs pull-right tag-buttons" role="toolbar">
-                    {% for tag in post.tags %}
-                        <a class="btn btn-default"
-                           role="group" aria-label="{{ tag.name }}">
-                            {{ tag.name }}
-                        </a>
-                    {% endfor %}
-                </div>
-
-            </div>
-            <div class="post">
-                {{ post.html|safe }}
-            </div>
-            <div class="post-buttons pull-right btn-group" role="group">
-                <a href="{{ url_for('edit', post_id=post.id) }}" class="btn btn-default">
-                    edit
-                </a>
-                <a href="{{ url_for('post', post_id=post.id) }}" class="btn btn-default">
-                    view
-                </a>
-                <a href="{{ url_for('delete', post_id=post.id) }}" data-toggle="confirmation" class="btn btn-danger">
-                    delete
-                </a>
-            </div>
-        </div>
+        {% include '_post.html' %}
     {% endfor %}
 </div>
 

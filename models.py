@@ -27,17 +27,7 @@ class Post(BasicModel):
 
     @classmethod
     def relevant_posts(cls, tags=None):
-        if tags is None:
-            tags = []
-
-        positives = []
-        negatives = []
-        for t in tags:
-            if t.startswith('-'):
-                negatives.append(t[1:])
-            else:
-                positives.append(t)
-
+        positives, negatives = Tag.filter_tags(tags)
         positive_tag_ids = [t.id for t in Tag.select().where(Tag.name << positives)]
         negative_tag_ids = [t.id for t in Tag.select().where(Tag.name << negatives)]
 
@@ -102,6 +92,21 @@ class Post(BasicModel):
 
 class Tag(BasicModel):
     name = CharField(max_length=64, index=True, unique=True)
+
+    @classmethod
+    def filter_tags(cls, tags):
+        if tags is None:
+            tags = []
+
+        positives = []
+        negatives = []
+        for t in tags:
+            if t.startswith('-'):
+                negatives.append(t[1:])
+            else:
+                positives.append(t)
+
+        return positives, negatives
 
 class TagPost(BasicModel):
     tag_id = IntegerField(index=True)
