@@ -47,8 +47,9 @@
 
 <script>
     var globals = globals || {}
-    globals['searchUrl'] = "{{ url_for('search', _external=True) }}"
+    globals['searchUrl'] = "{{ url_for('index', _external=True) }}"
     globals['newPostUrl'] = "{{ url_for('new', _external=True) }}"
+    globals['tags'] = {{ tags|tojson|safe }}
 
     $(function() {
         $('#search').select2({
@@ -57,6 +58,9 @@
             tokenSeparators: [' ', ','],
             width: '100%'
         });
+
+        $('#search').select2('val', globals['tags'])
+
         $('#search').on('change', function() {
             console.log('--changed')
         })
@@ -133,6 +137,12 @@
             Mousetrap(el).bind('alt+n', function() {
                 $('#new-btn').trigger('click')
             })
+        })
+
+        $('#search-btn').click(function () {
+            var tags = $('#search').select2('val').join(',')
+
+            location.href = globals['searchUrl'] + '?tags=' + encodeURIComponent(tags)
         })
     })
 </script>

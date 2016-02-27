@@ -25,6 +25,56 @@ class Post(BasicModel):
     html = TextField()
     created_at = DateTimeField(default=datetime.datetime.now)
 
+    @classmethod
+    def relevant_posts(cls, tags=None):
+        if tags is None:
+            tags = []
+
+        positives = []
+        negatives = []
+        for t in tags:
+            if t.startswith('-'):
+                negatives.append(t[1:])
+            else:
+                positives.append(t)
+
+        positive_tag_ids = [t.id for t in Tag.select().where(Tag.name << positives)]
+        negative_tag_ids = [t.id for t in Tag.select().where(Tag.name << negatives)]
+
+        negatives_join = TagPost.select(TagPost.post_id).join(
+            Tag,
+            JOIN_INNER,
+            on=(TagPost.tag_id == Tag.id)
+        ).where(Tag.id << negative_tag_ids)
+        negatives_join = negatives_join.alias('nj')
+
+        lp = len(positives)
+        if lp > 0:
+            positives_join = TagPost.select(TagPost.post_id).join(
+                Tag,
+                JOIN_INNER,
+                on=(TagPost.tag_id == Tag.id)
+            ).where(Tag.id << positive_tag_ids).group_by(
+                TagPost.post_id
+            ).having(fn.Count(Tag.id) == lp)
+        else:
+            positives_join = TagPost.select(TagPost.post_id).distinct()
+        positives_join = positives_join.alias('pj')
+
+        req = Post.select().join(
+            negatives_join,
+            JOIN_LEFT_OUTER,
+            on=(Post.id == negatives_join.c.post_id)
+        ).join(
+            positives_join,
+            JOIN_INNER,
+            on=(Post.id == positives_join.c.post_id)
+        ).where(negatives_join.c.post_id == None).order_by(
+            Post.created_at.desc()
+        )
+
+        return req
+
     @property
     def tags(self):
         tag_ids = [t.tag_id for t in TagPost.select().where(TagPost.post_id == self.id)]

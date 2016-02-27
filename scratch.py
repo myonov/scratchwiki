@@ -13,8 +13,14 @@ def _pretty_date(value):
 
 @app.route('/')
 def index():
+    tags = request.args.get('tags', '')
+    tags = tags.split(',')
+    if len(tags) == 1 and tags[0] == '':
+        tags = []
+
     data = {
-        'posts': Post.select().order_by(Post.created_at.desc())
+        'posts': Post.relevant_posts(tags),
+        'tags': tags,
     }
     return render_template('index.html', **data)
 
@@ -75,10 +81,6 @@ def post(post_id):
         'post': Post.get(Post.id == post_id)
     }
     return render_template('post.html', **data)
-
-@app.route('/search')
-def search():
-    pass
 
 if app.debug:
     @app.route('/media/<path:filename>')
