@@ -4,8 +4,10 @@ import markdown
 
 from models import *
 
+import settings
+
 app = Flask(__name__)
-app.debug = True
+app.debug = settings.debug
 
 @app.template_filter('date')
 def _pretty_date(value):
@@ -92,4 +94,8 @@ if app.debug:
         return send_from_directory(app.root_path + '/media', filename)
 
 if __name__ == '__main__':
-    app.run()
+    kwargs = {}
+    if settings.host:
+        kwargs.update({'host': settings.host})
+
+    app.run(**kwargs)
