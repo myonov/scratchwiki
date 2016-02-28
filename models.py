@@ -4,6 +4,7 @@ import os
 import sys
 import datetime
 import inspect
+import math
 
 from peewee import *
 
@@ -116,6 +117,48 @@ class TagPost(BasicModel):
         indexes = (
             (('tag_id', 'post_id'), True),
         )
+
+
+class Pager(object):
+    POSTS_PER_PAGE = 50
+
+    def __init__(self, q, current_page, posts_per_page=POSTS_PER_PAGE):
+        self.q = q
+        self.total_count = self.q.count()
+        self.posts_per_page = posts_per_page
+        if current_page < 1:
+            current_page = 1
+        if current_page > self.pages:
+            current_page = self.pages
+        self.current_page = current_page
+
+    @property
+    def current(self):
+        return self.current_page
+
+    @property
+    def pages(self):
+        return int(math.ceil(self.total_count) / float(self.posts_per_page))
+
+    @property
+    def has_prev_page(self):
+        return self.current_page > 1
+
+    @property
+    def has_next_page(self):
+        return self.current_page < self.pages
+
+    @property
+    def prev(self):
+        return self.current_page - 1
+
+    @property
+    def next(self):
+        return self.current_page + 1
+
+    @property
+    def posts(self):
+        return self.q.paginate(self.current_page, self.posts_per_page)
 
 if __name__ == '__main__':
     db.connect()

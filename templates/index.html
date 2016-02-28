@@ -12,9 +12,20 @@
 </div>
 
 <div class="row">
-    {% for post in posts %}
+    {% for post in pager.posts %}
         {% include '_post.html' %}
     {% endfor %}
+
+    <nav class="pull-right">
+        <button class="btn btn-default nav-btn {{ 'disabled' if not pager.has_prev_page else '' }}"
+           data-page="{{ pager.prev }}">
+            &lt;
+        </button>
+        <button class="btn btn-default nav-btn {{ 'disabled' if not pager.has_next_page else '' }}"
+           href="" data-page="{{ pager.next }}">
+            &gt;
+        </button>
+    </nav>
 </div>
 
 <script>
@@ -111,10 +122,32 @@
             })
         })
 
-        $('#search-btn').click(function () {
+        $('#search-btn').click(function() {
             var tags = $('#search').select2('val').join(',')
 
             location.href = globals['searchUrl'] + '?tags=' + encodeURIComponent(tags)
+        })
+
+        $('.nav-btn').click(function(e) {
+            var term, prefix, $that = $(this)
+
+            if ( $that.hasClass('disabled') ) {
+                return
+            }
+
+            term = /([&?])page=(\d+)/
+            if ( location.href.match(term) != null ) {
+                location.href = location.href.replace(term, function(match, p1, p2) {
+                    return p1 + 'page=' + $that.data('page')
+                })
+            } else {
+                if ( location.href.indexOf('?') != -1 ) {
+                    prefix = '&'
+                } else {
+                    prefix = '?'
+                }
+                location.href = location.href + prefix + 'page=' + $that.data('page')
+            }
         })
     })
 </script>

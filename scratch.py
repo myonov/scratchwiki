@@ -18,8 +18,11 @@ def index():
     if len(tags) == 1 and tags[0] == '':
         tags = []
 
+    current_page = int(request.args.get('page', 1))
+    pager = Pager(Post.relevant_posts(tags), current_page)
+
     data = {
-        'posts': Post.relevant_posts(tags),
+        'pager': pager,
         'tags': tags,
     }
     return render_template('index.html', **data)
