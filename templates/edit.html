@@ -14,45 +14,15 @@
 </div>
 
 <script>
-    var globals = globals || {}
-    globals['postTags'] = {{ post.tag_names|tojson|safe }}
-    globals['markdown'] = {{ post.markdown|tojson|safe }}
-    globals['newTags'] = decodeURIComponent({{ new_tags|tojson|safe }}).split(',').filter(function(val) {
-        return !val.startsWith('-')
-    })
-
-    $(function() {
-        var simplemde = new SimpleMDE({
-            element: $('#editor')[0],
-            spellChecker: false,
-            autoDownloadFontAwesome: false
+    globals.data = {
+        postTags: {{ post.tag_names|tojson|safe }},
+        markdown: {{ post.markdown|tojson|safe }},
+        newTags: decodeURIComponent({{ new_tags|tojson|safe }}).split(',').filter(function(val) {
+            return !val.startsWith('-')
         })
-        $('#tags').select2({
-            placeholder: 'Tags',
-            tags: [],
-            tokenSeparators: [' ', ','],
-            width: '100%'
-        })
-        if ( globals.postTags.length > 0 ) {
-            $('#tags').select2('val', globals.postTags)
-        } else {
-            $('#tags').select2('val', globals.newTags)
-        }
-        simplemde.value(globals.markdown)
+    }
 
-        var callback = function() {
-            $('#post-form').submit();
-        }
-
-        Mousetrap.bind('ctrl+enter', callback);
-        $('#post-form input').each(function(idx, element) {
-            Mousetrap(element).bind('ctrl+enter', callback)
-        })
-
-        $('#post-form textarea').each(function(idx, element) {
-            Mousetrap(element).bind('ctrl+enter', callback)
-        })
-    });
 </script>
+<script src="{{ url_for('static', filename='edit.js') }}"></script>
 
 {% endblock %}

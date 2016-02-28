@@ -120,7 +120,7 @@ class TagPost(BasicModel):
 
 
 class Pager(object):
-    POSTS_PER_PAGE = 50
+    POSTS_PER_PAGE = 10
 
     def __init__(self, q, current_page, posts_per_page=POSTS_PER_PAGE):
         self.q = q

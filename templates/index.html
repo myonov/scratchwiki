@@ -17,139 +17,24 @@
     {% endfor %}
 
     <nav class="pull-right">
-        <button class="btn btn-default nav-btn {{ 'disabled' if not pager.has_prev_page else '' }}"
+        <button id="nav-btn-prev" class="btn btn-default nav-btn {{ 'disabled' if not pager.has_prev_page else '' }}"
            data-page="{{ pager.prev }}">
             &lt;
         </button>
-        <button class="btn btn-default nav-btn {{ 'disabled' if not pager.has_next_page else '' }}"
-           href="" data-page="{{ pager.next }}">
+        <button id="nav-btn-next" class="btn btn-default nav-btn {{ 'disabled' if not pager.has_next_page else '' }}"
+           data-page="{{ pager.next }}">
             &gt;
         </button>
     </nav>
 </div>
 
 <script>
-    var globals = globals || {}
-    globals['searchUrl'] = "{{ url_for('index', _external=True) }}"
-    globals['newPostUrl'] = "{{ url_for('new', _external=True) }}"
-    globals['tags'] = {{ tags|tojson|safe }}
-
-    $(function() {
-        $('#search').select2({
-            placeholder: 'Search tags',
-            tags: true,
-            tokenSeparators: [' ', ','],
-            width: '100%'
-        });
-
-        $('#search').select2('val', globals['tags'])
-
-        $('#search').on('change', function() {
-            console.log('--changed')
-        })
-
-        var toggleMeta = function(showOrHide) {
-            showOrHide = parseInt(showOrHide)
-            if ( showOrHide ) {
-                $('.meta-entry').css({
-                    display: ''
-                })
-                $('.post-buttons').css({
-                    display: ''
-                })
-                $('.entry').css({
-                    border: '1px solid #ddd',
-                    'margin-top': 20,
-                    'padding': 20
-                })
-                $('.entry').addClass('well')
-                $('.entry').addClass('well-sm')
-            } else {
-                $('.meta-entry').css({
-                    display: 'none'
-                })
-                $('.post-buttons').css({
-                    display: 'none'
-                })
-                $('.entry').css({
-                    border: 'none',
-                    'margin-top': 0,
-                    'padding': 0
-                })
-                $('.well').each(function(idx, el) { $(el).removeClass('well') })
-                $('.well').each(function(idx, el) { $(el).removeClass('well-sm') })
-            }
-        }
-
-        var callback = function() {
-            var showOrHide = sessionStorage.getItem('showOrHide') || 1
-            showOrHide = 1 - showOrHide
-            sessionStorage.setItem('showOrHide', showOrHide)
-            toggleMeta(showOrHide)
-        }
-        Mousetrap.bind('alt+h', callback);
-
-        toggleMeta(sessionStorage.getItem('showOrHide') || 1)
-
-        $('[data-toggle="confirmation"]').confirmation({
-            placement: 'top',
-            onConfirm: function(event, element) {
-                window.location = $(element).attr('href')
-            }
-        })
-
-        $('#new-btn').click(function() {
-            location.href = globals['newPostUrl'] + '?tags=' + encodeURIComponent($('#search').val())
-        })
-
-        $('.tag-buttons a').click(function(e) {
-            var currentTags, $that, newTag
-
-            e.preventDefault()
-            currentTags = $('#search').select2('val')
-            $that = $(this)
-            newTag = $that.attr('aria-label')
-            currentTags.push(newTag)
-            $('#search').select2('val', currentTags)
-        })
-
-        Mousetrap.bind('alt+n', function() {
-            $('#new-btn').trigger('click')
-        })
-        $('.search-bar input').each(function(idx, el) {
-            Mousetrap(el).bind('alt+n', function() {
-                $('#new-btn').trigger('click')
-            })
-        })
-
-        $('#search-btn').click(function() {
-            var tags = $('#search').select2('val').join(',')
-
-            location.href = globals['searchUrl'] + '?tags=' + encodeURIComponent(tags)
-        })
-
-        $('.nav-btn').click(function(e) {
-            var term, prefix, $that = $(this)
-
-            if ( $that.hasClass('disabled') ) {
-                return
-            }
-
-            term = /([&?])page=(\d+)/
-            if ( location.href.match(term) != null ) {
-                location.href = location.href.replace(term, function(match, p1, p2) {
-                    return p1 + 'page=' + $that.data('page')
-                })
-            } else {
-                if ( location.href.indexOf('?') != -1 ) {
-                    prefix = '&'
-                } else {
-                    prefix = '?'
-                }
-                location.href = location.href + prefix + 'page=' + $that.data('page')
-            }
-        })
-    })
+    globals.data = {
+        searchUrl: "{{ url_for('index', _external=True) }}",
+        newPostUrl: "{{ url_for('new', _external=True) }}",
+        tags: {{ tags|tojson|safe }}
+    }
 </script>
+<script src="{{ url_for('static', filename='index.js') }}"></script>
 
 {% endblock %}
