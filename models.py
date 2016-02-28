@@ -138,7 +138,7 @@ class Pager(object):
 
     @property
     def pages(self):
-        return int(math.ceil(self.total_count) / float(self.posts_per_page))
+        return int(math.ceil((self.total_count) / float(self.posts_per_page)))
 
     @property
     def has_prev_page(self):
