@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, redirect
+from flask import Flask, render_template, request, redirect, g
 from flask.helpers import url_for, send_from_directory
 import markdown
 
@@ -12,6 +12,16 @@ app.debug = settings.debug
 @app.template_filter('date')
 def _pretty_date(value):
     return value.strftime('%H:%M:%S %d.%m.%Y')
+
+@app.before_request
+def before_request():
+    g.db = db
+    g.db.connect()
+
+@app.after_request
+def after_request(response):
+    g.db.close()
+    return response
 
 @app.route('/')
 def index():

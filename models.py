@@ -176,3 +176,4 @@ if __name__ == '__main__':
         not_used_tags = [t.id for t in not_used_tags]
         q = Tag.delete().where(Tag.id << not_used_tags)
         q.execute()
+    db.close()
